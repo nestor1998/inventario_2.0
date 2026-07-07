@@ -10,11 +10,11 @@ import uuid
 from .models import (
     Producto, Marca, Estado, Ubicacion, Solicitante, Solicitud,
     Proveedor, Cotizacion, ItemCotizacion, OrdenCompra, ItemOrdenCompra,
-    Elemento,ItemSolicitud
+    ItemSolicitud
 )
 
 # ==========================================================
-#  ADMIN ELEMENTO
+#  
 # ==========================================================
 from django.forms.models import BaseInlineFormSet
 from django.core.exceptions import ValidationError
@@ -29,14 +29,9 @@ class ItemSolicitudInline(admin.TabularInline):
     extra = 1
     fields = ['producto', 'cantidad']
 # ==========================================================
-#  INLINE PARA ELEMENTOS (solo para kits)
+
 # ==========================================================
-class ElementoInline(admin.TabularInline):
-    model = Elemento
-    extra = 1
-    fields = ['nombre', 'cantidad_real', 'cantidad_actual']
-    verbose_name = "Elemento del Kit"
-    verbose_name_plural = "Elementos del Kit"
+
 
 # ==========================================================
 #  ADMIN PRODUCTO
@@ -77,7 +72,7 @@ class ProductoAdmin(admin.ModelAdmin):
         return ", ".join([estado.name for estado in obj.state.all()])
     estados.short_description = "Estado"
 
-    # Mostrar inline de elementos SOLO en kits
+
 
 
     # Cuando creas un kit, al guardar te manda a la pantalla de ediciÃ³n del mismo

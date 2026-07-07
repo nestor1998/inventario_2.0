@@ -195,28 +195,9 @@ class Producto(models.Model):
 
         super().save(*args, **kwargs)
 
-# ELEMENTO (de un kit)
-class Elemento(models.Model):
-    kit = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="elementos")
-    nombre = models.CharField("Nombre elemento",max_length=100)
-    cantidad_real = models.PositiveIntegerField(default=1)
-    cantidad_actual = models.PositiveIntegerField(default=1)
 
-    class Meta:
-        verbose_name = "Elemento"
-        verbose_name_plural = "Elementos"
-        
-    def clean(self):
-        # VALIDACIÓN ESPECÍFICA: cantidad_actual no puede ser mayor a cantidad_real
-        if self.cantidad_actual > self.cantidad_real:
-            raise ValidationError({
-                'cantidad_actual': "La cantidad actual no puede ser mayor que la cantidad real del kit."
-            })
 
-    def __str__(self):
-        return f"{self.nombre} ({self.cantidad_actual}/{self.cantidad_real})"
 
-# SOLICITUD (Solo PRODUCTO o ELEMENTO)
 class Solicitud(models.Model):
 
     ESTADO_CHOICES = [
