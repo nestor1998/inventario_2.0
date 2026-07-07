@@ -78,16 +78,10 @@ class ProductoAdmin(admin.ModelAdmin):
     estados.short_description = "Estado"
 
     # Mostrar inline de elementos SOLO en kits
-    def get_inline_instances(self, request, obj=None):
-        if obj and obj.tipo_item == 'kit':
-            return [ElementoInline(self.model, self.admin_site)]
-        return []
+
 
     # Cuando creas un kit, al guardar te manda a la pantalla de ediciÃ³n del mismo
-    def response_add(self, request, obj, post_url_continue=None):
-        if obj.tipo_item == 'kit':
-            return HttpResponseRedirect(f"/admin/core/producto/{obj.id}/change/")
-        return super().response_add(request, obj, post_url_continue)
+
 
     # AquÃ­ clonamos despuÃ©s de guardar M2M e inlines
     def save_related(self, request, form, formsets, change):
@@ -106,7 +100,6 @@ class ProductoAdmin(admin.ModelAdmin):
         if (
             producto.tipo_item == 'kit'
             and producto.stock > 1
-            and producto.elementos.exists()
             and not producto.kits_generados
         ):
 
@@ -136,13 +129,7 @@ class ProductoAdmin(admin.ModelAdmin):
                 nuevo.brand.set(producto.brand.all())
                 nuevo.state.set([estado_disp])
 
-                for elem in producto.elementos.all():
-                    Elemento.objects.create(
-                        kit=nuevo,
-                        nombre=elem.nombre,
-                        cantidad_real=elem.cantidad_real,
-                        cantidad_actual=elem.cantidad_actual,
-                    )
+
 
             producto.kits_generados = True
             producto.save(update_fields=['kits_generados'])
