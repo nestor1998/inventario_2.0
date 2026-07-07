@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Page Header-->
+<header class="masthead" style="background: linear-gradient(45deg, #160101, #791515);">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    <h1>Bitácora</h1>
+                    <span class="subheading">Registro de movimientos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content-->
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col card-container">
+                {% for registro in page_obj %}
+                    <div class="card">
+                        {% if registro.photo %}
+                        <a href="{{registro.photo.url}}" data-lightbox="{{registro.photo.url}}" data-title="{{registro.created}}">
+                            <img class="card-img-left" src="{{registro.photo.url}}" alt="{{registro.title}}">
+                        </a>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{registro.title | upper}}</h5>
+                            <p class="card-text">Evento: {{registro.event.type}}</p>
+                            <p class="card-text">{{registro.description}}</p>
+                            <p style="font-size: 15px; color: rgba(111, 100, 112, 0.616);">
+                                Por {{registro.author}} - {{registro.created|date:"d/m/Y H:i"}}
+                            </p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center">No hay registros en la bitácora.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

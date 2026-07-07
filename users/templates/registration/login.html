@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<header class="masthead" style="background-image: url({% static 'core/assets/img/about-bg.jpg' %})">
+  <div class="container position-relative px-4 px-lg-5">
+      <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="page-heading">
+                <h1>Iniciar Sesión</h1>
+              </div>
+          </div>
+      </div>
+  </div>
+</header>
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="card mx-auto" style="width: 30rem;">
+      <div class="card-body" style="text-align: center;">
+        <h5 class="card-title" style="font-size: 25px;">Ingrese sus Credenciales</h5>
+        <br>
+        {{ form | crispy }}
+        <br>
+        <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
+      </div>
+    </div>
+</form>
+
+{% endblock %}

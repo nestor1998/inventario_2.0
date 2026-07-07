@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center" style="font-weight:800; color:#eb0000;">
+        📄 Cotizaciones desde la API
+    </h2>
+
+    <!-- GRID DE TARJETAS -->
+    <div class="card-container" id="cotizaciones-container">
+        <!-- Aquí se cargan las tarjetas -->
+    </div>
+
+</div>
+
+<script>
+    fetch("/api/cotizaciones/")
+        .then(res => res.json())
+        .then(cotizaciones => {
+
+            let contenedor = document.getElementById("cotizaciones-container");
+
+            cotizaciones.forEach(c => {
+
+                contenedor.innerHTML += `
+                    <div class="card">
+
+                        <h5 class="card-title">${c.nombre_cotizacion}</h5>
+
+                        <p class="card-text"><strong>Proveedor:</strong> ${c.proveedor_nombre}</p>
+                        <p class="card-text"><strong>Fecha:</strong> ${c.fecha}</p>
+                        <p class="card-text"><strong>Estado:</strong> 
+                            <span style="color:${c.estado === 'pendiente' ? '#b30000' : 'green'}; font-weight:700;">
+                                ${c.estado.toUpperCase()}
+                            </span>
+                        </p>
+
+                        <p class="card-text">
+                            <strong>Total Cotización:</strong> 
+                            <span style="color:#b30000; font-weight:800;">
+                                $${c.total_cotizacion}
+                            </span>
+                        </p>
+
+                        <hr style="width:100%; border:1px solid var(--border-soft);">
+
+                        <h6 style="font-weight:700; margin-top:10px;">🛒 Productos:</h6>
+
+                        <ul style="padding-left:18px; width:100%;">
+                            ${c.items.map(item => `
+                                <li class="card-text" style="margin-bottom:4px;">
+                                    ${item.nombre_producto} — ${item.cantidad} x $${item.precio_unitario} 
+                                    = <strong>$${item.total}</strong>
+                                </li>
+                            `).join("")}
+                        </ul>
+
+                    </div>
+                `;
+            });
+
+        });
+</script>
+
+{% endblock %}

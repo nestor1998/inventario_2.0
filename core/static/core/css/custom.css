@@ -1,0 +1,291 @@
+/* ============================
+      PALETA DE COLORES
+   ============================ */
+:root {
+  --color-primary: #eb0000;     
+  --color-secondary: #F5F5F5;   
+  --color-text: #121212;        
+  --color-card: #FAFAFA;        
+  --color-muted: #555555;
+  --border-soft: rgba(0, 0, 0, 0.12);
+}
+
+/* ============================
+      CONFIGURACIÓN GENERAL
+   ============================ */
+body {
+  background: var(--color-secondary);
+  color: var(--color-text);
+  font-family: "Inter", Arial, sans-serif;
+  margin: 0;
+  transition: 0.3s ease;
+}
+
+/* ============================
+      HEADER SUPERIOR
+   ============================ */
+.masthead {
+  background: #0A0A0A !important;
+  padding: 2rem 0;
+  text-align: center;
+  border-bottom: 2px solid var(--border-soft);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+}
+
+.navbar-logo {
+  height: 50px;
+}
+
+/* ============================
+      NAVEGACIÓN PRINCIPAL
+   ============================ */
+#mainNav {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+#mainNav .nav-link {
+  color: #000 !important;
+  font-weight: 600;
+  transition: .2s ease;
+}
+
+#mainNav .nav-link:hover {
+  color: var(--color-primary) !important;
+  text-shadow: 0 0 5px rgba(229,9,20,0.35);
+}
+
+/* ============================
+      TABS DE NAVEGACIÓN
+   ============================ */
+.nav-tabs {
+  border: none;
+  justify-content: center;
+  gap: 6px;
+  margin: 22px auto;
+  background: #FFF;
+  padding: 10px;
+  border-radius: 12px;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.nav-tabs .nav-link {
+  background: #F0F0F0;
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  border: 1px solid var(--border-soft);
+  transition: .2s ease-in-out;
+}
+
+.nav-tabs .nav-link:hover {
+  background: #FFF;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.nav-tabs .nav-link.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* ============================
+      BUSCADOR
+   ============================ */
+.input-group {
+  max-width: 480px;
+  margin: 0 auto 22px;
+}
+
+.input-group input {
+  border-radius: 10px 0 0 10px;
+  border: 1px solid var(--border-soft);
+  padding: 11px;
+  background: #FFFFFF;
+  color: var(--color-text);
+}
+
+.input-group input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 8px rgba(229,9,20,0.25);
+}
+
+.input-group .btn {
+  border-radius: 0 10px 10px 0;
+  background: var(--color-primary) !important;
+  color: #fff !important;
+  padding: 11px 18px;
+  font-weight: 700;
+}
+
+/* ============================
+      GRID DE TARJETAS
+   ============================ */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding: 30px 20px;
+}
+
+/* ============================
+      TARJETA DE PRODUCTO
+   ============================ */
+.card {
+  background: var(--color-card);
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  transition: .25s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Línea roja superior decorativa */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 18px 18px 0 0;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(235,0,0,0.18);
+  border-color: var(--color-primary);
+}
+
+/* ============================
+      IMAGEN DE LA TARJETA
+   ============================ */
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: #FFF;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* ============================
+      TÍTULO DE LA TARJETA
+   ============================ */
+.card-title {
+  font-size: 1.20rem;
+  font-weight: 800;
+  color: #b30000;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  margin-bottom: 10px;
+  text-align: center;
+  text-shadow: 0 0 2px rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.03);
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+/* ============================
+      TEXTO DESCRIPTIVO
+   ============================ */
+.card-text {
+  font-size: .92rem;
+  font-weight: 600;
+  color: #000 !important;
+  margin-bottom: 6px;
+}
+
+/* ============================
+      BOTÓN EDITAR PRODUCTO
+   ============================ */
+.btn-editar {
+  background: #d10000 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-weight: 600 !important;
+  width: 85% !important;
+  margin-top: 10px !important;
+  font-size: 0.85rem !important;
+  box-shadow: 0 0 6px rgba(0,0,0,0.15) !important;
+  transition: .25s ease-out;
+
+}
+
+.btn-editar:hover {
+  background: #7a0000 !important;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25) !important;
+}
+
+/* ============================
+      ALERTAS
+   ============================ */
+.alert-not-found,
+.alert-no-results {
+  background: rgba(229, 9, 20, 0.10);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* ============================
+      FOOTER
+   ============================ */
+.footer-container {
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: .85rem;
+  border-top: 1px solid var(--border-soft);
+  background: #FFFFFF;
+}
+
+/* ============================
+      PAGINACIÓN
+   ============================ */
+.pagination .page-link {
+  background: #FFFFFF;
+  border: 1px solid var(--border-soft);
+  color: var(--color-text);
+  padding: 9px 14px;
+  border-radius: 8px;
+  margin: 0 4px;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.pagination .page-link:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 8px rgba(229, 9, 20, 0.4);
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
+}
+
+.pagination .page-item.disabled .page-link {
+  background: #E0E0E0 !important;
+  color: #777 !important;
+  border-color: #CCC !important;
+}

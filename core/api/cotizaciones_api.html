@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}  {# Hereda la plantilla base (navbar, estilos globales, etc.) #}
+
+{% block content %}  {# Inicio del bloque de contenido que se insertará en base.html #}
+
+<div class="container mt-4">  {# Contenedor Bootstrap con margen superior #}
+    <h2 class="text-center" style="color:#eb0000; font-weight:800;">  {# Título centrado, color rojo Ferrari #}
+         Cotizaciones (desde la API)
+    </h2>
+
+    <div id="cotizaciones-container" class="card-container" style="margin-top:20px;">  
+        {# Contenedor vacío: aquí el JS insertará las tarjetas dinámicamente #}
+        <!-- Aquí se cargarán las tarjetas -->
+    </div>
+</div>
+
+
+<script>
+/* ============================================================
+   FUNCIÓN PRINCIPAL: Cargar cotizaciones desde la API
+   ============================================================ */
+async function cargarCotizaciones() {
+
+    // Hacer petición GET a la API /api/cotizaciones/
+    const response = await fetch("/api/cotizaciones/");
+
+    // Convertir la respuesta a JSON (lista de cotizaciones)
+    const cotizaciones = await response.json();
+
+    // Obtener el contenedor donde se insertarán las tarjetas
+    const cont = document.getElementById("cotizaciones-container");
+
+    // Limpiar contenido previo (por si se vuelve a cargar)
+    cont.innerHTML = "";
+
+    // Recorrer cada cotización del JSON
+    cotizaciones.forEach(c => {
+
+        // Aquí guardaremos el HTML de los productos de la cotización
+        let productosHTML = "";
+
+        /* ----------------------------------------------------------
+           Recorrer los items de cada cotización (productos)
+        ----------------------------------------------------------- */
+        c.items.forEach(item => {
+
+            // Construir cada producto como un <li>
+            productosHTML += `
+                <li>
+                    ${item.nombre_producto} — 
+                    ${item.cantidad} x $${item.precio_unitario} = $${item.total}
+                </li>
+            `;
+        });
+
+        /* ----------------------------------------------------------
+           Crear la tarjeta completa de la cotización en HTML
+        ----------------------------------------------------------- */
+        cont.innerHTML += `
+            <div class="card">   <!-- Tarjeta que muestra la cotización -->
+
+                <!-- Nombre de la cotización -->
+                <h4 class="card-title">${c.nombre_cotizacion}</h4>
+
+                <!-- Nombre del proveedor -->
+                <p class="card-text"><strong>Proveedor:</strong> ${c.proveedor_nombre}</p>
+
+                <!-- Fecha de creación -->
+                <p class="card-text"><strong>Fecha:</strong> ${c.fecha}</p>
+
+                <!-- Estado (convertido a mayúsculas) -->
+                <p class="card-text"><strong>Estado:</strong> ${c.estado.toUpperCase()}</p>
+
+                <!-- Total de la cotización calculado en la API -->
+                <p class="card-text" style="margin-top:10px; font-weight:800;">
+                    <strong>Total Cotización:</strong> $${c.total_cotizacion}
+                </p>
+
+                <!-- Título de la sección de productos -->
+                <h5 style="margin-top:15px; color:#b30000;">🛒 Productos:</h5>
+
+                <!-- Lista de productos generada dinámicamente -->
+                <ul style="text-align:left;">
+                    ${productosHTML}
+                </ul>
+
+            </div> <!-- Fin tarjeta -->
+        `;
+    }); // Fin del forEach de cotizaciones
+}
+
+/* ============================================================
+   Ejecutar la función cuando la página termine de cargarse
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", cargarCotizaciones);
+
+</script>
+
+{% endblock %}  {# Fin del bloque de contenido #}

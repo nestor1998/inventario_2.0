@@ -1,0 +1,76 @@
+{% extends 'bitacora/base.html' %}
+{% load static %}
+{% block content %}
+<!-- Page Header-->
+<header class="masthead" style="background: linear-gradient(45deg, #160101, #791515);">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    {% if request.user.is_authenticated %}
+                    <p>Bienvenido, {{ user.username | upper }}</p>
+                    {% endif %}
+                    {% if busqueda %}
+                    <h1>Búsqueda</h1>  
+                    {% else %}
+                    <h1>Bitácora</h1>  
+                    {% endif %}
+                    <form action="{% url 'bitacora' %}" method="get">
+                        <input name="busqueda" type="text" placeholder="Buscar...">
+                        <input name="fecha" type="date">
+                        <button class="btn btn-primary" type="submit">Buscar</button>
+                    </form>  
+                    <br>
+                    <a class="btn btn-secondary" href="{% url 'nuevo' %}">Agregar Registro</a> 
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<div class="navbar navbar-expand-lg navbar2 justify-content-center">
+    <ul class="nav nav-tabs">
+        <li><a class="nav-link" href="{% url 'bitacora' %}">Todos</a></li>
+        {% for campo in nav %}
+        <li><a class="nav-link {% if campo.type == eventos.type %}active{% endif %}" href="{% url 'eventos' campo.type %}">{{campo.type}}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">                        <!-- contenedor -->
+        <div class="row gx-4 gx-lg-5 justify-content-center">   <!-- filas -->
+            <div class="col card-container {% if page_obj|length <= 2 %} d-flex justify-content-center{% endif %}"> <!-- columnas -->
+                {% for bitacora in page_obj %}
+                        <div class="card">
+                            <img class="card-img-top"  {% if bitacora.photo %} src="{{bitacora.photo.url}}" style="display: flex;" {% else %} style="display: none;"  {% endif %} alt="evidencia">
+                            <div class="card-body" {% if not bitacora.photo %} style="align-content: center;" {% endif %}>
+                                <h5 class="card-title">{{bitacora.title}}</h5>
+                                <p class="card-text">Tipo: {{bitacora.event}}</p>
+                                <p class="card-text">Autor: {{bitacora.author.username}}</p>
+                                <p class="card-text">{{bitacora.description}}</p>
+                                <p style="font-size: 15px; color: rgba(111, 100, 112, 0.616);">{{bitacora.created}}</p>
+                            </div>
+                        </div>
+                {% endfor %}
+        </div>
+    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            
+            <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a></li>
+            {% endif %}
+            {% if page_obj.paginator.page_range|length > 1 %}
+            {% for page_number in page_obj.paginator.page_range %}  <!-- para mostrar el rango de paginas -->
+                <li class="page-item {% if page_number == page_obj.number %} disabled {% endif %}"><a class="page-link" href="?page={{page_number }}">{{ page_number }}</a></li>
+            {% endfor %}
+            {% endif %}
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Final</a></li>  <!-- esto rescata la cantidad de paginas totales y lo despliega como el numero correspondiente a la ultima-->
+            {% endif %}
+        </ul>
+    </nav>
+</main>
+{% endblock %}

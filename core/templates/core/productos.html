@@ -1,0 +1,178 @@
+{% extends 'core/base.html' %}  {# Extiende la plantilla base para mantener el layout general #}
+{% load static %}  {# Carga archivos estáticos como CSS o imágenes #}
+{% block content %}  {# Inicio del contenido específico de esta página #}
+
+<!-- Encabezado de la página -->
+<header class="masthead">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+
+                    {# Mostrar saludo si el usuario está autenticado #}
+                    {% if request.user.is_authenticated %}
+                        <p>Bienvenido, {{ user.username | upper }}</p>  {# Muestra el nombre en mayúsculas #}
+                    {% endif %}
+
+                    {# Mostrar título según filtro activo #}
+                    {% if category %}
+                        <h1>{{ category | title }}</h1> {# Si hay categoría, mostrarla #}
+                    {% elif busqueda %}
+                        <h1>Búsqueda</h1> {# Si hay búsqueda activa #}
+                    {% else %}
+                        <h1>Productos</h1> {# Vista por defecto #}
+                    {% endif %}
+
+                    {# Formulario de búsqueda #}
+                    <form method="GET" action="" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre o código de barras..." value="{{ busqueda }}">
+                            
+                            {# Mantener categoría seleccionada al buscar #}
+                            {% if category %}
+                                <input type="hidden" name="tipo" value="{{ category|lower }}">
+                            {% endif %}
+                            <button class="btn btn-primary" type="submit">Buscar</button>
+                        </div>
+                    </form>
+
+                    {# Botones de Excel #}
+                    <div class="mt-3 d-flex gap-2 justify-content-center">
+                        <a class="btn btn-secondary" href="{% url 'excel_productos' %}{% if category %}?categoria={{category}}{% endif %}{% if busqueda %}&busqueda={{busqueda}}{% endif %}">Descargar Excel</a>
+                        
+                        {# Mostrar botón de importar solo si el usuario está logueado #}
+                        {% if user.is_authenticated %}
+                            <a class="btn btn-success" href="{% url 'import_products' %}">Importar Excel</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Filtro por categorías -->
+<div class="navbar navbar-expand-lg navbar2 justify-content-center">
+    <ul class="nav nav-tabs">
+        <li><a class="nav-link {% if not category %}active{% endif %}" href="{% url 'product' %}">Todos</a></li>
+        <li><a class="nav-link {% if category == 'Consumibles' %}active{% endif %}" href="{% url 'category' 'Consumibles' %}">Consumibles</a></li>
+        <li><a class="nav-link {% if category == 'Dispositivos' %}active{% endif %}" href="{% url 'category' 'Dispositivos' %}">Dispositivos</a></li>
+        <li><a class="nav-link {% if category == 'Herramientas' %}active{% endif %}" href="{% url 'category' 'Herramientas' %}">Herramientas</a></li>
+    </ul>
+</div>
+
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col card-container {% if page_obj.object_list|length <= 2 %} d-flex justify-content-center{% endif %}">
+
+                {# Si no hay resultados #}
+                {% if page_obj.object_list|length == 0 %}
+                    <div class="alert alert-danger text-center py-4" style="font-size: 1.2rem;">
+                        No se encontraron resultados
+                        {% if busqueda %} para "{{ busqueda }}"{% endif %}
+                        {% if category %} en la categoría "{{ category }}" {% endif %}
+                    </div>
+
+                {% else %}
+                    {# Mostrar productos #}
+                    {% for producto in page_obj %}
+                        <div class="card">
+                            
+                            {# Imagen del producto si existe #}
+                            {% if producto.photo %}
+                                <a href="{{ producto.photo.url }}" data-lightbox="{{ producto.photo.url }}" data-title="{{ producto.updated }}">
+                                    <img class="card-img-left" src="{{ producto.photo.url }}" alt="{{ producto.name }}">
+                                </a>
+                            {% endif %}
+
+                            <div class="card-body d-flex flex-column">
+                                <div class="flex-grow-1">
+                                    
+                                    {# Nombre del producto #}
+                                    <h2 class="card-title text-danger mb-3">{{ producto.name | upper }}</h2>
+                                    
+                                    {# Información del producto #}
+                                    <p class="card-text mb-2">Marca: <span class="text-muted">{{ producto.brand.all|join:", " }}</span></p>
+                                    <p class="card-text mb-2">Ubicación: <span class="text-muted">{{ producto.location }}</span></p>
+                                    <p class="card-text mb-2">Estado: <span class="text-muted">{{ producto.state.all|join:", " }}</span></p>
+                                    <p class="card-text mb-2">Categoría: <span class="text-muted">{{ producto.tipo|title }}</span></p>
+                                    <p class="card-text mb-2">Codigo: <span class="text-muted">{{ producto.barcode }}</span></p>
+
+
+                                    {# Stock con color dinámico #}
+                                    <p class="card-text mb-3">Cantidad: 
+                                        <span class="badge {% if producto.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ producto.stock }} unidades
+                                        </span>
+                                    </p>
+
+                                    {# Fecha de ingreso #}
+                                    <p class="text-muted" style="font-size: 0.8em;">Agregado el {{ producto.created|date:"j \d\e F \d\e Y \a \l\a\s H:i" }}</p>
+                                </div>
+
+                                {# Botón para editar en el admin si está autenticado #}
+                                {% if user.is_authenticated %}
+                                    <div class="mt-auto">
+                                        <a href="{% url 'admin:core_producto_change' producto.id %}" class="btn-editar">
+                                            <i class="fas fa-edit" style="margin-right: 8px;"></i> Editar Producto
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    <nav aria-label="Navegación de páginas" class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            {# Botones "Primera" y "Anterior" si aplica #}
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="{% if category %}{% url 'category' category %}?page=1{% else %}?page=1{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}">
+                        &laquo;&laquo;
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{% if category %}{% url 'category' category %}?page={{ page_obj.previous_page_number }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}">
+                        &laquo;
+                    </a>
+                </li>
+            {% endif %}
+
+            {# Números de página dinámicos #}
+            {% for page_number in page_obj.paginator.page_range %}
+                {% if page_number == page_obj.number %}
+                    <li class="page-item active"><span class="page-link">{{ page_number }}</span></li>
+                {% elif page_number > page_obj.number|add:'-3' and page_number < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% if category %}{% url 'category' category %}?page={{ page_number }}{% else %}?page={{ page_number }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}">
+                            {{ page_number }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {# Botones "Siguiente" y "Última" #}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{% if category %}{% url 'category' category %}?page={{ page_obj.next_page_number }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}">
+                        &raquo;
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{% if category %}{% url 'category' category %}?page={{ page_obj.paginator.num_pages }}{% else %}?page={{ page_obj.paginator.num_pages }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}">
+                        &raquo;&raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</main>
+
+{% endblock %}
